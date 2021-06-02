@@ -1,35 +1,38 @@
+var harvester = require('actionHarvest');
 
 module.exports = {
     run:function(creep){
-        let startCpu = Game.cpu.getUsed();
-        let elapsed;
+        // let startCpu = Game.cpu.getUsed();
+        // let elapsed;
         //var carry = _.sum(creep.carry);
-        let carry = creep.carry.energy;
-
-        if(carry < creep.carryCapacity && !creep.memory.working){
-            
+        let carry = creep.store[RESOURCE_ENERGY];
+        // console.log("ТД: я жив");
+        if(carry < creep.store.getCapacity() && !creep.memory.working){
+            // console.log("ТД: Не полный рюкзак и не работаю");
             creep.memory.action ='harvest';
-            
-            let sourse;
-            
-            if(creep.memory.resID !== null){
-                sourse = Game.getObjectById(creep.memory.resID);
-            }
-            else{
-                sourse = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-            }
-            
-            let hResult = creep.harvest(sourse);
-            
-            if (hResult === ERR_NOT_IN_RANGE) {
-                creep.moveTo(sourse); //,{visualizePathStyle: {stroke: '#ffffff'}}
-            }
-            else if(hResult === OK){
-                creep.memory.resID = sourse.id;
-            }
-            else{
-                delete creep.memory.resID;
-            }
+            harvester.run(creep);
+            // let sourse;
+            //
+            // if(creep.memory.resID !== undefined){
+            //     // console.log("ТД: Есть что копать");
+            //     // console.log(creep.memory.resID);
+            //     sourse = Game.getObjectById(creep.memory.resID);
+            // }
+            // else{
+            //     sourse = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+            // }
+            //
+            // let hResult = creep.harvest(sourse);
+            //
+            // if (hResult === ERR_NOT_IN_RANGE) {
+            //     creep.moveTo(sourse); //,{visualizePathStyle: {stroke: '#ffffff'}}
+            // }
+            // else if(hResult === OK){
+            //     creep.memory.resID = sourse.id;
+            // }
+            // else{
+            //     delete creep.memory.resID;
+            // }
         
         }
         else{
@@ -47,7 +50,7 @@ module.exports = {
             });
             creep.memory.action ='transferToTower';
             //extensions || structure.energyCapacity === structure.energy
-            if (structure === null){
+            if (structure === undefined){
                 structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity
                 });
@@ -55,7 +58,7 @@ module.exports = {
             }
             
             //containers  || structure.energyCapacity === structure.energy
-            if (structure === null){
+            if (structure === undefined){
                 structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (s) => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] < s.storeCapacity
                 });
@@ -63,11 +66,11 @@ module.exports = {
             }
             
 
-            if (structure === null) {
+            if (structure === undefined) {
                 structure = creep.room.storage;
             }
 
-            if (structure !== null) {
+            if (structure !== undefined) {
                 let action = creep.transfer(structure, RESOURCE_ENERGY);
                 if ( action === ERR_NOT_IN_RANGE) {
                     creep.moveTo(structure);// ,{visualizePathStyle: {stroke: '#ffffff'}});
@@ -78,6 +81,6 @@ module.exports = {
             }
 
         }
-        
+
     }
 };

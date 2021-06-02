@@ -69,12 +69,14 @@ Creep.prototype.doUpgrade = function () {
 Creep.prototype.doRepair = function(){
 
     let targets = [];
-
-    if(this.memory.repObj !== undefined && Game.getObjectById(this.memory.repObj).hits <= (Game.getObjectById(this.memory.repObj).hitsMax/1.5)){
-        targets[0] = Game.getObjectById(this.memory.repObj);
-        delete this.memory.repObj;
+    if(this.memory.repObj !== null){
+        if(Game.getObjectById(this.memory.repObj) !== null){
+            if(Game.getObjectById(this.memory.repObj).hits <= (Game.getObjectById(this.memory.repObj).hitsMax/1.5)){
+                targets[0] = Game.getObjectById(this.memory.repObj);
+                delete this.memory.repObj;
+            }
+        }
     }
-
     if(targets.length<1){
         targets = this.room.find(FIND_STRUCTURES, {
             filter: object =>

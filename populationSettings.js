@@ -6,13 +6,13 @@ StructureSpawn.prototype.population = {
     //майнер энергии
     'harvester':{
         pref:'H',
-        limit:7,
+        limit:5,
         body:[WORK,MOVE,CARRY,CARRY]
     },
     // перетаскиватель ресурсов
     'lorry':{
         pref:'L',
-        limit:2,
+        limit:6,
         body:[MOVE,CARRY,CARRY,CARRY,MOVE]
     },
     //абгрейд контроллера
@@ -30,7 +30,7 @@ StructureSpawn.prototype.population = {
     // ремонтник, способен замещать строителя, если нет объектов для ремонта
     'repair':{
         pref:'R',
-        limit:3,
+        limit:1,
         body:[MOVE,CARRY,WORK,WORK]
     },
     // ремонтник, способен замещать строителя, если нет объектов для ремонта
@@ -42,7 +42,7 @@ StructureSpawn.prototype.population = {
     //майнер энергии в других комнатах
     'harvesterLD':{
         pref:'HLD',
-        limit:0,
+        limit:6,
         body:[WORK,MOVE,CARRY,MOVE]
     },
     //обслуживание башен, когда башня полная, исполняет роль harvester'a

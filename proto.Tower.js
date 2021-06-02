@@ -42,9 +42,9 @@ StructureTower.prototype.doRepair = function () {
         Memory.repair = {};
     }
 
-    if(Memory.repair !== undefined && Memory.repair[this.room.name]!== undefined){
+    if(Memory.repair[this.room.name] !== undefined){
         closestDamagedStructure = Game.getObjectById(Memory.repair[this.room.name]);
-        if(closestDamagedStructure.hits > (closestDamagedStructure.hitsMax / 2)){
+        if(closestDamagedStructure.hits > (closestDamagedStructure.hitsMax*0.5)){
             closestDamagedStructure = undefined;
             delete Memory.repair[this.room.name];
         }
@@ -54,8 +54,8 @@ StructureTower.prototype.doRepair = function () {
             filter: (structure) =>
             structure.structureType !== STRUCTURE_WALL
             && structure.structureType !== STRUCTURE_RAMPART
-            && structure.structureType !== STRUCTURE_ROAD
-            && structure.hits < (structure.hitsMax / 2)
+            // && structure.structureType !== STRUCTURE_ROAD
+            && structure.hits < (structure.hitsMax *0.5)
         });
     }
 
