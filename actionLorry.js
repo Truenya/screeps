@@ -121,7 +121,7 @@ module.exports = {
         // }
 
         function searchStructure(creep){
-             //creep.memory.action = 'transfer Energy';
+             creep.memory.action = 'transfer Energy';
             let structure;
             //console.log("пошли тащить")FIND_DROPPED_RESOURCES
             if(creep.memory.getFrom === STRUCTURE_CONTAINER){
@@ -175,23 +175,39 @@ module.exports = {
                 creep.memory.putTo = STRUCTURE_STORAGE;
                 console.log("Ну ладно, отнесем в сторадж");
             }
-            
+
             // if(!structure && creep.memory.getFrom !== STRUCTURE_CONTAINER){
             //     structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             //         filter: (s) => s.structureType === STRUCTURE_CONTAINER &&  s.store[RESOURCE_ENERGY] < s.storeCapacity
             //     });
             // }
             // // s.structureType === STRUCTURE_TOWER
-        return structure;
+            return structure;
         }
+
+        function transferEnergy(creep, structure) {
+            if (structure !== null) {
+
+                let resultTransfer = creep.transfer(structure, RESOURCE_ENERGY);
+                if (resultTransfer === ERR_NOT_IN_RANGE) {
+                    creep.moveTo(structure);
+                }
+                if (resultTransfer === OK) {
+                    if (creep.memory.getFrom !== STRUCTURE_STORAGE)
+                        creep.memory.getFrom = 0;
+                }
+            } else {
+                console.log('[notice] -> ' + creep.id + ' not found empty container for energy');
+            }
+        }
+
         // let startCpu = Game.cpu.getUsed();
         // let elapsed;
         // //console.log(creep.store[RESOURCE_ENERGY]);
         checkIfCreepIsBusy(creep);
 
 
-
-        if(!creep.memory.working){
+        if (!creep.memory.working) {
             // Тут мы выбираем откуда брать
             let target;
             // console.log("И ищет откуда бы взять энергии")
@@ -202,25 +218,9 @@ module.exports = {
 
         } else
         {
-
-            creep.memory.action = 'transfer Energy';
             let structure = searchStructure(creep);
             //console.log("пошли тащить")FIND_DROPPED_RESOURCES
-
-            if (structure !== null) {
-
-                let resultTransfer = creep.transfer(structure, RESOURCE_ENERGY);
-                if (resultTransfer === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(structure);
-                }
-                if(resultTransfer === OK) {
-                    if(creep.memory.getFrom !== STRUCTURE_STORAGE)
-                        creep.memory.getFrom = 0;
-                }
-            }
-            else{
-                console.log('[notice] -> '+creep.id+' not found empty container for energy');
-            }
+            transferEnergy(creep, structure);
         }
     }
 };
