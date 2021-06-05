@@ -1,3 +1,4 @@
+var utils = require("utils");
 module.exports = {
 
     /**
@@ -19,6 +20,7 @@ module.exports = {
                 creep.memory.working = false;
             }
         }
+
         function findClosestSourceOfEnergy(creep) {
             // Тут мы выбираем откуда брать
             let target;
@@ -50,7 +52,7 @@ module.exports = {
                 }
 
                 // FIXME добавить список объектов энергии, чтобы все за ними не рвались толпой
-                if (!isNorm(target)) {
+                if (!utils.isNorm(target)) {
                     target = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES)
                     creep.memory.getFrom = 0;
                 }
@@ -106,9 +108,9 @@ module.exports = {
                     pickUpEnergy = creep.pickup(target);
                     if(pickUpEnergy === ERR_NOT_IN_RANGE)
                         creep.moveTo(target);
-                    else 
+                    else
                         creep.memory.target = 0;
-                    
+
                     // console.log(pickUpEnergy);
                     // console.log(target);
                 }
@@ -127,7 +129,7 @@ module.exports = {
         // }
 
         function searchStructure(creep){
-             creep.memory.action = 'transfer Energy';
+            creep.memory.action = 'transfer Energy';
             let structure;
             //console.log("пошли тащить")FIND_DROPPED_RESOURCES
             if(creep.memory.getFrom === STRUCTURE_CONTAINER){
@@ -222,11 +224,10 @@ module.exports = {
             // console.log("И ищет откуда бы взять энергии")
             target = findClosestSourceOfEnergy(creep);
 
-            zabratEnergiyu(creep,target);
+            zabratEnergiyu(creep, target);
 
 
-        } else
-        {
+        } else {
             let structure = searchStructure(creep);
             //console.log("пошли тащить")FIND_DROPPED_RESOURCES
             transferEnergy(creep, structure);

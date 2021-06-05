@@ -1,50 +1,49 @@
+//TODO добавить функцию подобрать энергию и гонять в каждом крипе, если энергия в пределах трех клеток
 /**
  * добыча энергии
  * @returns {boolean}
  */
 Creep.prototype.mineEnergy = function () {
-        let source;
-        this.memory.action='mine Energy';
+    let source;
+    this.memory.action = 'mine Energy';
 
-        if(this.memory.resID){
-            source = this.pos.findClosestByPath(FIND_SOURCES_ACTIVE,{filter: s => s.id === this.memory.resID});
+    if (this.memory.resID) {
+        source = this.pos.findClosestByPath(FIND_SOURCES_ACTIVE, {filter: s => s.id === this.memory.resID});
+    }
+
+    if (!source) {
+        if (this.memory.badResID) {
+            source = this.pos.findClosestByPath(FIND_SOURCES_ACTIVE, {filter: s => s.id !== this.memory.badResID});
         }
 
-        if(!source){
-            if(this.memory.badResID){
-                source = this.pos.findClosestByPath(FIND_SOURCES_ACTIVE,{filter: s => s.id !== this.memory.badResID});
-            }
-
-            if(!source){
-                source = this.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-            }
+        if (!source) {
+            source = this.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
         }
+    }
 
-        /*if(!source && this.memFlags.length>0){
-            if(this.moveTo(Game.flags[this.memFlags[0]]) === OK){
-                this.say('traveling');
-                source = this.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-            }
-            return false;
-        }*/
+    /*if(!source && this.memFlags.length>0){
+        if(this.moveTo(Game.flags[this.memFlags[0]]) === OK){
+            this.say('traveling');
+            source = this.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+        }
+        return false;
+    }*/
 
-        let actResult = this.harvest(source);
-        if ( actResult === ERR_NOT_IN_RANGE) {
-            this.moveTo(source);
-        }
-        else if(actResult === OK){
-            delete this.memory.badResID;
-            this.memory.resID = source.id;
-        }
-        else if (actResult === ERR_NOT_ENOUGH_RESOURCES
-            //|| actResult === ERR_INVALID_TARGET
-            || actResult === ERR_NOT_OWNER){
-            this.memory.badResID = this.memory.resID;
-            delete this.memory.resID;
-        }
+    let actResult = this.harvest(source);
+    if (actResult === ERR_NOT_IN_RANGE) {
+        this.moveTo(source);
+    } else if (actResult === OK) {
+        delete this.memory.badResID;
+        this.memory.resID = source.id;
+    } else if (actResult === ERR_NOT_ENOUGH_RESOURCES
+        //|| actResult === ERR_INVALID_TARGET
+        || actResult === ERR_NOT_OWNER) {
+        this.memory.badResID = this.memory.resID;
+        delete this.memory.resID;
+    }
 
-        return this.carry.energy === this.carryCapacity;
-    };
+    return this.carry.energy === this.carryCapacity;
+};
 
 /**
  * абгрейд контроллера
@@ -80,9 +79,9 @@ Creep.prototype.doRepair = function(){
     if(targets.length<1){
         targets = this.room.find(FIND_STRUCTURES, {
             filter: object =>
-            object.structureType !== STRUCTURE_WALL
-            && object.structureType !== STRUCTURE_RAMPART
-            && object.hits < (object.hitsMax/2)
+                object.structureType !== STRUCTURE_WALL
+                && object.structureType !== STRUCTURE_RAMPART
+                && object.hits < (object.hitsMax / 2)
         });
         targets.sort((a,b) => a.hits - b.hits);
     }
@@ -109,23 +108,21 @@ Creep.prototype.doRepair = function(){
 Creep.prototype.doWallsRampartsRepair = function(){
     let targets = [];
 
-    if(this.memory.wallID && Game.getObjectById(this.memory.wallID).hits < Game.getObjectById(this.memory.wallID).hitsMax/2){
+    if (this.memory.wallID && Game.getObjectById(this.memory.wallID).hits < Game.getObjectById(this.memory.wallID).hitsMax / 2) {
         targets[0] = Game.getObjectById(this.memory.wallID);
-    }
-    else{
+    } else {
         targets = this.room.find(FIND_STRUCTURES, {
-            filter: object => (object.structureType === STRUCTURE_RAMPART || object.structureType === STRUCTURE_WALL) && object.hits < (object.hitsMax/2)
+            filter: object => (object.structureType === STRUCTURE_RAMPART || object.structureType === STRUCTURE_WALL) && object.hits < (object.hitsMax / 2)
         });
 
-        targets.sort((a,b) => a.hits - b.hits);
+        targets.sort((a, b) => a.hits - b.hits);
     }
 
     if(targets.length>0) {
         let actResult = this.repair(targets[0]);
         if (actResult === ERR_NOT_IN_RANGE) {
             this.moveTo(targets[0]);
-        }
-        else if(actResult === OK){
+        } else if (actResult === OK) {
             this.memory.wallID = targets[0].id;
         }
         this.memory.action = 'Wall repair';

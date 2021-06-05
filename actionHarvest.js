@@ -24,38 +24,40 @@ module.exports = {
             creep.memory.action = 'transfer Energy';
             let structure;
 
-            /**/if(Memory.population[creep.memory.spawn]['lorry'] === undefined || Memory.population[creep.memory.spawn]['lorry'] === 0 ){
-                //все экстеншены ДОЛЖНЫ быть заполнены!
-                structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                    filter: (s) =>  s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity
-                });
-            }
-
-
 
             // ищем ближийший накопитель
-            if(!structure){
-                structures = creep.pos.findInRange(FIND_STRUCTURES, 3,{
+            if (!structure) {
+                structures = creep.pos.findInRange(FIND_STRUCTURES, 3, {
                     filter: (s) => ((s.structureType === STRUCTURE_SPAWN
-                    || s.structureType === STRUCTURE_EXTENSION
-                    || s.structureType === STRUCTURE_TOWER)
-                    && s.energy < s.energyCapacity)
-                    || ((s.structureType === STRUCTURE_CONTAINER) && s.store[RESOURCE_ENERGY] < s.storeCapacity)
+                        || s.structureType === STRUCTURE_EXTENSION
+                        || s.structureType === STRUCTURE_TOWER)
+                        && s.energy < s.energyCapacity)
+                        || ((s.structureType === STRUCTURE_CONTAINER) && s.store[RESOURCE_ENERGY] < s.storeCapacity)
                 });
+                //TODO добавить список структур и обрабатывать его единообразно в одной функции.
+                /**/
+                if (Memory.population[creep.memory.spawn]['lorry'] === undefined || Memory.population[creep.memory.spawn]['lorry'] === 0) {
+                    //все экстеншены ДОЛЖНЫ быть заполнены!
+                    structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                        filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity
+                    });
+                }
 
-                if(structures.length > 0){
+                //если уровень контроллера позволяет строить стораджи, то забиваем только их!
+                if (!structure) {
+                    if (creep.room.controller.level > 3) {
+                        structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                            filter: (s) => s.structureType === STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] < s.storeCapacity
+                        });
+                    }
+                }
+
+
+                if (structures.length > 0) {
                     structure = structures[0];
                 }
             }
 
-            //если уровень контроллера позволяет строить стораджи, то забиваем только их!
-            if (!structure ){
-                if(creep.room.controller.level>3){
-                    structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                        filter: (s) => s.structureType === STRUCTURE_STORAGE &&  s.store[RESOURCE_ENERGY] < s.storeCapacity
-                    });
-                }
-            }
 
             // если все забили, то забиваем все подряд, что еще не наполнено
             if (!structure){

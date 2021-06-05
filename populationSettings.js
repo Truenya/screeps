@@ -4,56 +4,56 @@
  */
 StructureSpawn.prototype.population = {
     //майнер энергии
-    'harvester':{
-        pref:'H',
-        limit:5,
-        body:[WORK,MOVE,CARRY,CARRY]
+    'harvester': {
+        pref: 'H',
+        limit: 4,
+        body: [WORK, MOVE, CARRY, WORK]
     },
     // перетаскиватель ресурсов
-    'lorry':{
-        pref:'L',
-        limit:6,
-        body:[MOVE,CARRY,CARRY,CARRY,MOVE]
+    'lorry': {
+        pref: 'L',
+        limit: 2,
+        body: [MOVE, CARRY, CARRY, CARRY, MOVE]
     },
     //абгрейд контроллера
-    'upgrader':{
-        pref:'Up',
-        limit:2,
-        body:[MOVE,MOVE,CARRY,WORK]
+    'upgrader': {
+        pref: 'Up',
+        limit: 2,
+        body: [MOVE, MOVE, CARRY, WORK]
     },
     // строитель
-    'builder':{
-        pref:'B',
-        limit:2,
-        body:[MOVE,CARRY,WORK,WORK]
+    'builder': {
+        pref: 'B',
+        limit: 4,
+        body: [MOVE, CARRY, WORK, WORK]
     },
     // ремонтник, способен замещать строителя, если нет объектов для ремонта
-    'repair':{
-        pref:'R',
-        limit:1,
-        body:[MOVE,CARRY,WORK,WORK]
+    'repair': {
+        pref: 'R',
+        limit: 2,
+        body: [MOVE, CARRY, WORK, WORK]
     },
     // ремонтник, способен замещать строителя, если нет объектов для ремонта
-    'repairWall':{
-        pref:'WR',
-        limit:1,
-        body:[MOVE,CARRY,WORK,WORK]
+    'repairWall': {
+        pref: 'WR',
+        limit: 0,
+        body: [MOVE, CARRY, WORK, WORK]
     },
     //майнер энергии в других комнатах
-    'harvesterLD':{
-        pref:'HLD',
-        limit:6,
-        body:[WORK,MOVE,CARRY,MOVE]
+    'harvesterLD': {
+        pref: 'HLD',
+        limit: 0,
+        body: [WORK, MOVE, CARRY, MOVE]
     },
     //обслуживание башен, когда башня полная, исполняет роль harvester'a
-    'TowerSupply':{
-        pref:'TS',
-        limit:0,
-        body:[MOVE,CARRY,WORK,WORK]
+    'TowerSupply': {
+        pref: 'TS',
+        limit: 0,
+        body: [MOVE, CARRY, WORK, WORK]
     },
-    'RoomClaimer':{
-        pref:'RC',
-        limit:0,
-        body:[MOVE,CARRY,CLAIM,WORK]
+    'RoomClaimer': {
+        pref: 'RC',
+        limit: 0,
+        body: [MOVE, CARRY, CLAIM, WORK]
     },
 };

@@ -8,7 +8,7 @@ var actions = {
     harvesterLD: require('actionHarvestLD'),
     lorry: require('actionLorry')
 };
-
+var utils = require('utils');
 /**
  * удаление крипов по роли
  * @param role
@@ -16,6 +16,7 @@ var actions = {
  */
 StructureSpawn.prototype.DellCreeps = function (role) {
     let nums = 0;
+
     for(let name in Game.creeps){
         if(Game.creeps[name].memory.role === role){
             Game.creeps[name].suicide();
@@ -65,8 +66,8 @@ StructureSpawn.prototype.killEmAll = function () {
  * @constructor
  */
 StructureSpawn.prototype.GetPopulation = function () {
-
     let total = 0;
+
     if(Memory.population !== undefined){
         for(let role in Memory.population[this.name]){
             let max;
@@ -106,17 +107,18 @@ StructureSpawn.prototype.populationControl = function () {
 
     //region контроль популяции
 
-    if(Memory.population === undefined){
+    if (!utils.isNorm(Memory.population)) {
         Memory.population = {};
     }
 
 
-    if (Memory.population[this.name] === undefined) {
+    if (!utils.isNorm(Memory.population[this.name])) {
         Memory.population[this.name] = {};
     }
 
     for (let role in this.population) {
-        if (Memory.population[this.name][role] === undefined) {
+
+        if (!utils.isNorm(Memory.population[this.name][role])) {
             Memory.population[this.name][role] = 0;
         }
     }
@@ -124,7 +126,6 @@ StructureSpawn.prototype.populationControl = function () {
     //endregion
 
     for (let name in Memory.creeps) {
-
         if (Game.creeps[name] === undefined) {
             Memory.population[this.name][Memory.creeps[name].role]--;
 
@@ -152,9 +153,15 @@ StructureSpawn.prototype.populationControl = function () {
         }
     }
 
+
     if(!this.spawning){
+
         for (let role in this.population) {
+            console.log(role);
+            console.log(Memory.population[this.name][role]);
             if (Memory.population[this.name][role] < this.population[role]['limit']) {
+
+
                 this.creepCreate(role);
                 break;
             }

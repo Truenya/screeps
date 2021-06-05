@@ -17,9 +17,7 @@ const linkSettings = require('linkSettings');
 Memory.linkSettings = {};
 Memory.linkSettings = linkSettings;
 //endregion
-
 module.exports.loop = function () {
-
     //region башни
     let towersCount = 0;
     let towers = _.filter(Game.structures, function (s) {
@@ -38,6 +36,7 @@ module.exports.loop = function () {
                     tower.doRepair();
                 }
                 else{
+                    //TODO поправить, что при использовании тавера может ложиться весь луп
                     tower.doRepair();
                 }
             }
@@ -52,6 +51,8 @@ module.exports.loop = function () {
     //endregion
 
     for (let spawn in Game.spawns) {
+        // if()
+        // console.log("Спавним крипов");
         Game.spawns[spawn].populationControl();
     }
 
