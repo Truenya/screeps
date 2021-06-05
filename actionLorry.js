@@ -6,10 +6,6 @@ module.exports = {
      * @param {Creep} creep
      */
     run:function(creep){
-        function isNorm(chtoto) {
-            return (chtoto !== null && chtoto !== undefined && chtoto !== 0)
-        }
-
         function checkIfCreepIsBusy(creep) {
             // if(creep.store[RESOURCE_ENERGY] === creep.store.getCapacity()){
             if (creep.store[RESOURCE_ENERGY] > 0) {
@@ -60,7 +56,7 @@ module.exports = {
 
                 // console.log(target);
                 //если нет в сторадже, идем в контейнеры, если есть, конечно
-                if (!isNorm(target)) {
+                if (!utils.isNorm(target)) {
                     target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                         filter: (s) => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > creep.store.getCapacity()
                     });
@@ -68,12 +64,11 @@ module.exports = {
                     //console.log("Заберем из контейнера");
                     creep.memory.getFrom = STRUCTURE_CONTAINER;
                 }
-                if (isNorm(target))
+                if (utils.isNorm(target))
                     creep.memory.target = target.id;
                 // console.log(creep.memory.target);
-            }
-            else{
-                if ((creep.memory.getFrom !== creep.memory.putTo) && isNorm(Game.getObjectById(creep.memory.target))) {
+            } else {
+                if ((creep.memory.getFrom !== creep.memory.putTo) && utils.isNorm(Game.getObjectById(creep.memory.target))) {
                     target = Game.getObjectById(creep.memory.target);
                     // console.log("Что-то есть в памяти");
                 } else {
@@ -88,7 +83,7 @@ module.exports = {
         }
 
         function zabratEnergiyu(creep,target){
-            if (isNorm(target)) {
+            if (utils.isNorm(target)) {
                 // console.log("lorry znayet kuda idti");
                 let actRes = creep.withdraw(target, RESOURCE_ENERGY);
                 // console.log(actRes);
@@ -136,54 +131,54 @@ module.exports = {
                 structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_STORAGE &&  s.store[RESOURCE_ENERGY] < s.storeCapacity
                 });
-                if (isNorm(structure))
+                if (utils.isNorm(structure))
                     creep.memory.putTo = STRUCTURE_STORAGE;
             }
 
             // ищем ближийший накопитель
-            if (!isNorm(structure)) {
+            if (!utils.isNorm(structure)) {
                 structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => (s.structureType === STRUCTURE_SPAWN) && s.energy < s.energyCapacity
                 });
-                if (isNorm(structure))
+                if (utils.isNorm(structure))
                     creep.memory.putTo = STRUCTURE_SPAWN;
             }
 
-            if (!isNorm(structure)) {
+            if (!utils.isNorm(structure)) {
                 //все экстеншены ДОЛЖНЫ быть заполнены!
                 structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity
                 });
-                if (isNorm(structure))
+                if (utils.isNorm(structure))
                     creep.memory.putTo = STRUCTURE_EXTENSION;
             }
 
-            if (!isNorm(structure)) {
+            if (!utils.isNorm(structure)) {
                 structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_TOWER && s.store[RESOURCE_ENERGY] < s.storeCapacity
                 });
-                if (isNorm(structure))
+                if (utils.isNorm(structure))
                     creep.memory.putTo = STRUCTURE_TOWER;
                 //Если товер заполнен и энергия не закончилась, то отнесем в сторадж, иначе эта переменная все равно будет перезаписана
                 creep.memory.getFrom = STRUCTURE_CONTAINER;
             }
 
-            if ((!isNorm(structure)) && creep.memory.getFrom !== STRUCTURE_STORAGE) {
+            if ((!utils.isNorm(structure)) && creep.memory.getFrom !== STRUCTURE_STORAGE) {
                 structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_STORAGE
                     // &&  s.store[RESOURCE_ENERGY] < s.storeCapacity
                 });
-                if (isNorm(structure))
+                if (utils.isNorm(structure))
                     creep.memory.putTo = STRUCTURE_STORAGE;
 
             }
             // Если уж все заполнено и даже пусть мы брали из стораджа, отнесем снова туда
-            if ((!isNorm(structure))) {
+            if ((!utils.isNorm(structure))) {
                 structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_STORAGE
                     // &&  s.store[RESOURCE_ENERGY] < s.storeCapacity
                 });
-                if (isNorm(structure))
+                if (utils.isNorm(structure))
                     creep.memory.putTo = STRUCTURE_STORAGE;
 
             }
@@ -197,7 +192,7 @@ module.exports = {
         }
 
         function transferEnergy(creep, structure) {
-            if (isNorm(structure)) {
+            if (utils.isNorm(structure)) {
 
                 let resultTransfer = creep.transfer(structure, RESOURCE_ENERGY);
                 if (resultTransfer === ERR_NOT_IN_RANGE) {
