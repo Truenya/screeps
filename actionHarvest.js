@@ -1,3 +1,4 @@
+var utils = require('utils');
 module.exports = {
     /**
      * мачете собирать!
@@ -15,7 +16,7 @@ module.exports = {
                 elapsed = Game.cpu.getUsed() - startCpu;
                 if (elapsed > Memory.noticeSettings['noticeCPULevel']) {
                     creep.say(Math.round(elapsed,2)+'%');
-                   // console.log('[CPU]-> creep.harvest action: mine energy, cpu usage:' + elapsed);
+                    // console.log('[CPU]-> creep.harvest action: mine energy, cpu usage:' + elapsed);
                 }
             }
         }
@@ -29,14 +30,19 @@ module.exports = {
             if (!structure) {
                 structures = creep.pos.findInRange(FIND_STRUCTURES, 3, {
                     filter: (s) => ((s.structureType === STRUCTURE_SPAWN
-                        || s.structureType === STRUCTURE_EXTENSION
-                        || s.structureType === STRUCTURE_TOWER)
+                            || s.structureType === STRUCTURE_EXTENSION
+                            || s.structureType === STRUCTURE_TOWER
+                            // || s.structureType === STRUCTURE_LINK
+                        )
                         && s.energy < s.energyCapacity)
                         || ((s.structureType === STRUCTURE_CONTAINER) && s.store[RESOURCE_ENERGY] < s.storeCapacity)
                 });
+                //STRUCTURE_LINK
                 //TODO добавить список структур и обрабатывать его единообразно в одной функции.
                 /**/
-                if (Memory.population[creep.memory.spawn]['lorry'] === undefined || Memory.population[creep.memory.spawn]['lorry'] === 0) {
+                let c_vo_lorry = Memory.population[creep.memory.spawn]['lorry'];
+
+                if (!utils.isNorm(c_vo_lorry)) {
                     //все экстеншены ДОЛЖНЫ быть заполнены!
                     structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                         filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity
@@ -63,10 +69,10 @@ module.exports = {
             if (!structure){
                 structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => ((s.structureType === STRUCTURE_SPAWN
-                    || s.structureType === STRUCTURE_EXTENSION
-                    || s.structureType === STRUCTURE_TOWER)
-                    && s.energy < s.energyCapacity)
-                    || ((s.structureType === STRUCTURE_CONTAINER) && s.store[RESOURCE_ENERGY] < s.storeCapacity)
+                        || s.structureType === STRUCTURE_EXTENSION
+                        || s.structureType === STRUCTURE_TOWER)
+                        && s.energy < s.energyCapacity)
+                        || ((s.structureType === STRUCTURE_CONTAINER) && s.store[RESOURCE_ENERGY] < s.storeCapacity)
                 });
             }
 
@@ -89,15 +95,14 @@ module.exports = {
                 if (creep.transfer(structure, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                     creep.moveTo(structure);
                 }
-            }
-            else{
+            } else{
                 console.log('[notice] -> '+creep.id+' not found empty container for energy');
             }
             if( Memory.noticeSettings  !== undefined &&  Memory.noticeSettings['noticeCPU']=== true && Memory.noticeSettings['noticeCPULevel']) {
                 elapsed = Game.cpu.getUsed() - startCpu;
                 if (elapsed > Memory.noticeSettings['noticeCPULevel']) {
                     creep.say(Math.round(elapsed,2)+'%');
-                   // console.log('[CPU]-> creep.harvest action: transfer energy, cpu usage:' + elapsed);
+                    // console.log('[CPU]-> creep.harvest action: transfer energy, cpu usage:' + elapsed);
                 }
             }
         }

@@ -157,8 +157,8 @@ StructureSpawn.prototype.populationControl = function () {
     if(!this.spawning){
 
         for (let role in this.population) {
-            console.log(role);
-            console.log(Memory.population[this.name][role]);
+            // console.log(role);
+            // console.log(Memory.population[this.name][role]);
             if (Memory.population[this.name][role] < this.population[role]['limit']) {
 
 
