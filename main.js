@@ -28,4 +28,5 @@ module.exports.loop = function () {
     
     // cc.creepActions();
     lc.linkActions();
+    cache.creepActions();
 };

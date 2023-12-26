@@ -93,22 +93,11 @@ StructureSpawn.prototype.cleanMemoryPopulation = function () {
     console.log('Done');
 };
 
-const actions = {
-    harvester: require('actionHarvest'),
-    upgrader: require('actionUpgrader'),
-    builder: require('actionBuilder'),
-    repair: require('actionRepaireler'),
-    repairWall: require('actionWallRepair'),
-    TowerSupply: require('actionTowerSupply'),
-    harvesterLD: require('actionHarvestLD'),
-    lorry: require('actionLorry'),
-    RoomClaimer: require('actionClaimer'),
-};
-
 /**
  * контроль рождаемости крипов
  */
 StructureSpawn.prototype.populationControl = function () {
+
     //region контроль популяции
     if (!utils.isNorm(Memory.population)) {
         Memory.population = {};
@@ -125,33 +114,6 @@ StructureSpawn.prototype.populationControl = function () {
     }
     //endregion
 
-    // FIXME: этого тут быть не должно.
-    for (let name in Memory.creeps) {
-        if (isNorm(Game.creeps[name])) {
-            //запуск action'ов
-            //FIXME  вынести из спавна экшены
-            actions[Memory.creeps[name].role].run(Game.creeps[name]);
-            continue;
-        }
-
-        // Game.creeps[name] === undefined
-        Memory.population[this.name][Memory.creeps[name].role]--;
-
-        if(Memory.population[this.name][Memory.creeps[name].role] < 0){
-            Memory.population[this.name][Memory.creeps[name].role] = 0;
-        }
-
-        if (Memory.creeps[name].resourceRoomID !== undefined) {
-            Memory.resourceRooms[Memory.creeps[name].resourceRoomID] --;
-
-            if(Memory.resourceRooms[Memory.creeps[name].resourceRoomID] < 0){
-                Memory.resourceRooms[Memory.creeps[name].resourceRoomID] = 0;
-            }
-        }
-
-        delete Memory.creeps[name];
-    }
-    // Вот досюда фиксить
     // console.log(`[population]-> ${this.name} -> ${JSON.stringify(Memory.population[this.name])}`);
     if(this.spawning){
         // console.log('[notice]-> spawning...');
