@@ -29,41 +29,41 @@ function findClosestSourceOfEnergy(creep) {
         }
     }
 
-        // FIXME добавить список объектов энергии, чтобы все за ними не рвались толпой
-        // if (creep.room.controller.level > 4) {
-        target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-            filter: (s) => s.structureType === STRUCTURE_LINK && s.energy > 0
-                || s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0
-                || s.structureType === STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] > 0
-        });
-        if (isNorm(target)) {
-            creep.memory.getFrom = target.structureType;
-            return target;
-        }
-        // }
-
-        // Если последнее куда мы клали не сторадж, значит можно оттуда взять
-        if (creep.memory.putTo !== STRUCTURE_STORAGE) {
-            target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (s) => s.structureType === STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] > 0
-            });
-            if (isNorm(target)) {
-                creep.memory.getFrom = STRUCTURE_STORAGE;
-                return target;
-            }
-        }
-
-        //если нет в сторадже, идем в контейнеры, если есть, конечно
-        target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-            filter: (s) => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > creep.store.getCapacity()
-        });
-        creep.memory.getFrom = STRUCTURE_CONTAINER;
-        if (isNorm(target)) {
-            creep.memory.target = target.id;
-        }
-
+    // FIXME добавить список объектов энергии, чтобы все за ними не рвались толпой
+    // if (creep.room.controller.level > 4) {
+    target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+        filter: (s) => s.structureType === STRUCTURE_LINK && s.energy > 0
+            || s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0
+            || s.structureType === STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] > 0
+    });
+    if (isNorm(target) && creep.memory.putTo !== target.structureType) {
+        creep.memory.getFrom = target.structureType;
         return target;
     }
+    // }
+
+    // Если последнее куда мы клали не сторадж, значит можно оттуда взять
+    if (creep.memory.putTo !== STRUCTURE_STORAGE) {
+        target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (s) => s.structureType === STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] > 0
+        });
+        if (isNorm(target)) {
+            creep.memory.getFrom = STRUCTURE_STORAGE;
+            return target;
+        }
+    }
+
+    //если нет в сторадже, идем в контейнеры, если есть, конечно
+    target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+        filter: (s) => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > creep.store.getCapacity()
+    });
+    creep.memory.getFrom = STRUCTURE_CONTAINER;
+    if (isNorm(target)) {
+        creep.memory.target = target.id;
+    }
+
+    return target;
+}
 
     function takeEnergy(creep,target){
         if (!isNorm(target)) {

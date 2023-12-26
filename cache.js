@@ -1,4 +1,4 @@
-function init(){
+function initState(){
     if (!Memory.state)
         Memory.state = {};
 
@@ -18,8 +18,33 @@ function init(){
     Memory.state.initialized = true;
 }
 
-exports.init = init;
+const resourceRooms={};
 
+function initResourceRooms(){
+    if(Memory.resourceRooms === undefined){
+        Memory.resourceRooms = [];
+        for(let id in creep.resourseRooms){
+            Memory.resourceRooms[id] = 0;
+            console.log(id);
+        }
+    }
+
+    if (creep.memory.resourceRoomID === undefined) {
+        for (let id in creep.resourseRooms) {
+            if (Memory.resourceRooms[id] < creep.resourseRooms[id]['limit']) {
+                creep.memory.resourceRoomID = id;
+                Memory.resourceRooms[id] += 1;
+                break;
+            }
+        }
+    }
+}
+
+function init(){
+    initState();
+}
+
+exports.init = init;
 
 // function clear() {
 //     Memory.structures = undefined;
