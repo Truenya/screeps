@@ -21,36 +21,27 @@ Creep.prototype.mineEnergy = function () {
         }
     }
 
-    /*if(!source && this.memFlags.length>0){
-        if(this.moveTo(Game.flags[this.memFlags[0]]) === OK){
-            this.say('traveling');
-            source = this.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-        }
-        return false;
-    }*/
-
     let actResult = this.harvest(source);
     if (actResult === ERR_NOT_IN_RANGE) {
         this.moveTo(source);
     } else if (actResult === OK) {
         delete this.memory.badResID;
         this.memory.resID = source.id;
-    } else if (actResult === ERR_NOT_ENOUGH_RESOURCES
-        //|| actResult === ERR_INVALID_TARGET
-        || actResult === ERR_NOT_OWNER) {
+    } else if (
+        // actResult === ERR_NOT_ENOUGH_RESOURCES||
+         actResult === ERR_INVALID_TARGET ||
+         actResult === ERR_NOT_OWNER) {
         this.memory.badResID = this.memory.resID;
         delete this.memory.resID;
     }
-
-    return this.carry.energy === this.carryCapacity;
+    return this.carry.energy !== this.carryCapacity;
 };
 
 /**
- * абгрейд контроллера
+ * апгрейд контроллера
  * @returns {boolean}
  */
 Creep.prototype.doUpgrade = function () {
-
     if(this.carry.energy === 0){
         return false;
     }
@@ -77,7 +68,7 @@ Creep.prototype.doRepair = function(){
         }
     }
     if(targets.length<1){
-        targets = this.room.find(FIND_STRUCTURES, {
+        targets = this.room.find(FIND_MY_STRUCTURES, {
             filter: object =>
                 object.structureType !== STRUCTURE_WALL
                 && object.structureType !== STRUCTURE_RAMPART
@@ -111,7 +102,7 @@ Creep.prototype.doWallsRampartsRepair = function(){
     if (this.memory.wallID && Game.getObjectById(this.memory.wallID).hits < Game.getObjectById(this.memory.wallID).hitsMax / 2) {
         targets[0] = Game.getObjectById(this.memory.wallID);
     } else {
-        targets = this.room.find(FIND_STRUCTURES, {
+        targets = this.room.find(FIND_MY_STRUCTURES, {
             filter: object => (object.structureType === STRUCTURE_RAMPART || object.structureType === STRUCTURE_WALL) && object.hits < (object.hitsMax / 2)
         });
 
@@ -153,8 +144,3 @@ Creep.prototype.doBuild = function () {
  * @type {Array}
  */
 Creep.prototype.resourseRooms = [];
-/**
- * Флаг, чтобы крип не вертелся на каждом тике, если надо сгонять куда-то далеко
- * @type {boolean}
- */
-Creep.prototype.gonnaEndMyWork = true;

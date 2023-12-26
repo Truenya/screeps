@@ -1,4 +1,4 @@
-var utils = require("utils");
+const utils = require("utils");
 module.exports = {
 
     /**
@@ -20,113 +20,92 @@ module.exports = {
         function findClosestSourceOfEnergy(creep) {
             // Тут мы выбираем откуда брать
             let target;
-            // console.log("Ищем ");
             creep.memory.action = 'looking for Energy';
             // TODO Добавить поиск мертвых крипов с энергией, чтобы не исчезала
             // если есть стораджи и в них есть что брать
-            if (creep.room.controller.level > 4) {
-                target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                    filter: (s) => s.structureType === STRUCTURE_LINK && s.energy > 0
-                });
-                creep.memory.getFrom = STRUCTURE_LINK;
-            }
-            // else{
-            // // если нет ничего выше перечисленного, идем в контенеры и берем оттуда энергию
-            // creep.memory.target=0;
-            if (!creep.memory.target) {
-
-                //  if(!target){
-                //     target = creep.pos.findClosestByPath(FIND_TOMBSTONES)
-                // };
-                // Если последнее куда мы клали не сторадж, значит можно оттуда взять
-                if (creep.memory.putTo !== STRUCTURE_STORAGE) {
-                    target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                        filter: (s) => s.structureType === STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] > 0
-                    });
-                    creep.memory.getFrom = STRUCTURE_STORAGE;
-                }
-
-                // FIXME добавить список объектов энергии, чтобы все за ними не рвались толпой
-                if (!utils.isNorm(target)) {
-                    target = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES)
-                    creep.memory.getFrom = LOOK_ENERGY;
-                }
-
-
-                // console.log(target);
-                //если нет в сторадже, идем в контейнеры, если есть, конечно
-                if (!utils.isNorm(target)) {
-                    target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                        filter: (s) => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > creep.store.getCapacity()
-                    });
-                    //console.log("Заберем из контейнера");
-                    creep.memory.getFrom = STRUCTURE_CONTAINER;
-                }
-                if (utils.isNorm(target))
-                    creep.memory.target = target.id;
-                // console.log(creep.memory.target);
-            } else {
+            // if (creep.room.controller.level > 4) {
+            //     target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+            //         filter: (s) => s.structureType === STRUCTURE_LINK && s.energy > 0
+            //     });
+            //     creep.memory.getFrom = STRUCTURE_LINK;
+            // }
+            // // если нет ничего выше перечисленного, идем в контейнеры и берем оттуда энергию
+            if (creep.memory.target) {
                 if ((creep.memory.getFrom !== creep.memory.putTo) && utils.isNorm(Game.getObjectById(creep.memory.target))) {
-                    target = Game.getObjectById(creep.memory.target);
-                    // console.log("Что-то есть в памяти");
-                } else {
-                    creep.memory.target = 0
-                    // creep.memory.getFrom = STRUCTURE_CONTAINER;
-                    console.log("в памяти ничего адекватного и мы ее почистили");
+                    return Game.getObjectById(creep.memory.target);
                 }
-                //neFIXME, вроде разобрался(надеюсь) Разобраться с циклическим весельем у контейнера(стораджа)
+
+                creep.memory.target = 0;
+                console.log("lorry: в памяти ничего адекватного и мы ее почистили");
+
+                // FIXME, вроде разобрался(надеюсь) Разобраться с циклическим весельем у контейнера(стораджа)
+                return undefined;
             }
-            // console.log(target);
+
+            // Если последнее куда мы клали не сторадж, значит можно оттуда взять
+            if (creep.memory.putTo !== STRUCTURE_STORAGE) {
+                target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                    filter: (s) => s.structureType === STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] > 0
+                });
+                creep.memory.getFrom = STRUCTURE_STORAGE;
+            }
+
+            // FIXME добавить список объектов энергии, чтобы все за ними не рвались толпой
+            if (!utils.isNorm(target)) {
+                target = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES)
+                creep.memory.getFrom = LOOK_ENERGY;
+            }
+
+
+            //если нет в сторадже, идем в контейнеры, если есть, конечно
+            if (!utils.isNorm(target)) {
+                target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                    filter: (s) => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > creep.store.getCapacity()
+                });
+                creep.memory.getFrom = STRUCTURE_CONTAINER;
+            }
+            if (utils.isNorm(target))
+                creep.memory.target = target.id;
+
             return target;
         }
 
         function zabratEnergiyu(creep,target){
-            if (utils.isNorm(target)) {
-                // console.log("lorry znayet kuda idti");
-                let actRes = creep.withdraw(target, RESOURCE_ENERGY);
-                // console.log(actRes);
-                // console.log(target);
-                if (actRes === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target);
-                    //console.log("i idet tuda");
-                }
-                if (actRes === OK) {
-                    // console.log("Лорри: А ну пох вроде все забрал");
-                    creep.memory.working = true;
-                    creep.memory.target = 0;
-                }
-                if (actRes === ERR_NOT_ENOUGH_RESOURCES)
-                    creep.memory.target = 0;
-                if(actRes === ERR_INVALID_TARGET){
-                    pickUpEnergy = creep.pickup(target);
-                    if(pickUpEnergy === ERR_NOT_IN_RANGE)
-                        creep.moveTo(target);
-                    else
-                        creep.memory.target = 0;
+            if (!utils.isNorm(target)) {
+                return;
+            }
 
-                    // console.log(pickUpEnergy);
-                    // console.log(target);
-                }
+            let actRes = creep.withdraw(target, RESOURCE_ENERGY);
+            switch (actRes) {
+                case OK:
+                    creep.memory.working = true;
+                    //fallthrough
+                case ERR_NOT_ENOUGH_RESOURCES:
+                    creep.memory.target = 0;
+                    break;
+                case ERR_INVALID_TARGET:
+                    const pickUpEnergy = creep.pickup(target);
+                    if(pickUpEnergy !== ERR_NOT_IN_RANGE) {
+                        creep.memory.target = 0;
+                        break;
+                    }
+                    //fallthrough
+                case ERR_NOT_IN_RANGE:
+                    creep.moveTo(target);
+                    // utils.routeCreep(creep, target);
+                    break;
+                default:
+                    break;
             }
         }
-
-        // function noticeIt(creep){
-        //     if( Memory.noticeSettings !== null &&  Memory.noticeSettings['noticeCPU'] === true && Memory.noticeSettings['noticeCPULevel']) {
-        //         elapsed = Game.cpu.getUsed() - startCpu;
-        //         if (elapsed > Memory.noticeSettings['noticeCPULevel']) {
-        //             creep.say(Math.round(elapsed,2)+'%');
-        //            // //console.log('[CPU]-> creep.harvest action: mine energy, cpu usage:' + elapsed);
-        //         }
-        //     }
-        //
-        // }
 
         function searchStructure(creep){
             creep.memory.action = 'transfer Energy';
             let structure;
-            //console.log("пошли тащить")FIND_DROPPED_RESOURCES
+
+            // пошли тащить
             if(creep.memory.getFrom === STRUCTURE_CONTAINER){
-                structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_STORAGE &&  s.store[RESOURCE_ENERGY] < s.storeCapacity
                 });
                 if (utils.isNorm(structure))
@@ -135,7 +114,7 @@ module.exports = {
 
             // ищем ближийший накопитель
             if (!utils.isNorm(structure)) {
-                structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
                     filter: (s) => (s.structureType === STRUCTURE_SPAWN) && s.energy < s.energyCapacity
                 });
                 if (utils.isNorm(structure))
@@ -144,7 +123,7 @@ module.exports = {
 
             if (!utils.isNorm(structure)) {
                 //все экстеншены ДОЛЖНЫ быть заполнены!
-                structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity
                 });
                 if (utils.isNorm(structure))
@@ -152,7 +131,7 @@ module.exports = {
             }
 
             if (!utils.isNorm(structure)) {
-                structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_TOWER && s.store[RESOURCE_ENERGY] < s.storeCapacity
                 });
                 if (utils.isNorm(structure))
@@ -162,7 +141,7 @@ module.exports = {
             }
 
             if ((!utils.isNorm(structure)) && creep.memory.getFrom !== STRUCTURE_STORAGE) {
-                structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_STORAGE
                     // &&  s.store[RESOURCE_ENERGY] < s.storeCapacity
                 });
@@ -172,7 +151,7 @@ module.exports = {
             }
             // Если уж все заполнено и даже пусть мы брали из стораджа, отнесем снова туда
             if ((!utils.isNorm(structure))) {
-                structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_STORAGE
                     // &&  s.store[RESOURCE_ENERGY] < s.storeCapacity
                 });
@@ -180,12 +159,6 @@ module.exports = {
                     creep.memory.putTo = STRUCTURE_STORAGE;
 
             }
-            // if(!structure && creep.memory.getFrom !== STRUCTURE_CONTAINER){
-            //     structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-            //         filter: (s) => s.structureType === STRUCTURE_CONTAINER &&  s.store[RESOURCE_ENERGY] < s.storeCapacity
-            //     });
-            // }
-            // // s.structureType === STRUCTURE_TOWER
             return structure;
         }
 
@@ -204,25 +177,16 @@ module.exports = {
                 console.log('[notice] -> ' + creep.id + ' not found empty container for energy');
             }
         }
-
-        // let startCpu = Game.cpu.getUsed();
-        // let elapsed;
-        // //console.log(creep.store[RESOURCE_ENERGY]);
+        console.log('lorry: ' + creep.name + ' ' + creep.memory.action);
         checkIfCreepIsBusy(creep);
 
 
         if (!creep.memory.working) {
             // Тут мы выбираем откуда брать
-            let target;
-            // console.log("И ищет откуда бы взять энергии")
-            target = findClosestSourceOfEnergy(creep);
-
+            let target = findClosestSourceOfEnergy(creep);
             zabratEnergiyu(creep, target);
-
-
         } else {
             let structure = searchStructure(creep);
-            //console.log("пошли тащить")FIND_DROPPED_RESOURCES
             transferEnergy(creep, structure);
         }
     }

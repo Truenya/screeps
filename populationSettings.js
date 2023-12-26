@@ -6,16 +6,16 @@ StructureSpawn.prototype.population = {
     //майнер энергии
     'harvester': {
         pref: 'H',
-        limit: 4,
+        limit: 3,
         body: [WORK, MOVE, CARRY, WORK]
     },
     // перетаскиватель ресурсов
     'lorry': {
         pref: 'L',
-        limit: 1,
+        limit: 2,
         body: [MOVE, CARRY, CARRY, CARRY, MOVE]
     },
-    //абгрейд контроллера
+    //апгрейд контроллера
     'upgrader': {
         pref: 'Up',
         limit: 2,
@@ -24,19 +24,7 @@ StructureSpawn.prototype.population = {
     // строитель
     'builder': {
         pref: 'B',
-        limit: 4,
-        body: [MOVE, CARRY, WORK, WORK]
-    },
-    // ремонтник, способен замещать строителя, если нет объектов для ремонта
-    'repair': {
-        pref: 'R',
-        limit: 2,
-        body: [MOVE, CARRY, WORK, WORK]
-    },
-    // ремонтник, способен замещать строителя, если нет объектов для ремонта
-    'repairWall': {
-        pref: 'WR',
-        limit: 0,
+        limit: 3,
         body: [MOVE, CARRY, WORK, WORK]
     },
     //майнер энергии в других комнатах
@@ -45,10 +33,22 @@ StructureSpawn.prototype.population = {
         limit: 0,
         body: [WORK, MOVE, CARRY, MOVE]
     },
+    // ремонтник, способен замещать строителя, если нет объектов для ремонта
+    'repair': {
+        pref: 'R',
+        limit: 1,
+        body: [MOVE, CARRY, WORK, WORK]
+    },
+    // ремонтник, способен замещать строителя, если нет объектов для ремонта
+    'repairWall': {
+        pref: 'WR',
+        limit: 0,
+        body: [MOVE, CARRY, WORK, WORK]
+    },
     //обслуживание башен, когда башня полная, исполняет роль harvester'a
     'TowerSupply': {
         pref: 'TS',
-        limit: 0,
+        limit: 1,
         body: [MOVE, CARRY, WORK, WORK]
     },
     'RoomClaimer': {
@@ -57,3 +57,5 @@ StructureSpawn.prototype.population = {
         body: [MOVE, CARRY, CLAIM, WORK]
     },
 };
+
+StructureSpawn.prototype.populationPriority = ['harvester', 'builder', 'harvesterLD', 'lorry', 'upgrader', 'repair', 'repairWall', 'TowerSupply', 'RoomClaimer'];
