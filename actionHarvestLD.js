@@ -80,7 +80,7 @@ module.exports = {
         // если все забили, то забиваем все подряд, что еще не наполнено
         let structure;
         if (!structure){
-            structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+            structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (s) => ((s.structureType === STRUCTURE_SPAWN
                             || s.structureType === STRUCTURE_EXTENSION
                             || s.structureType === STRUCTURE_TOWER

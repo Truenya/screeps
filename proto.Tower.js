@@ -38,7 +38,7 @@ StructureTower.prototype.doRepair = function () {
         }
     }
     if (!closestDamagedStructure) {
-        closestDamagedStructure = this.pos.findClosestByRange(FIND_MY_STRUCTURES, {
+        closestDamagedStructure = this.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) =>
                 structure.structureType !== STRUCTURE_WALL
                 && structure.structureType !== STRUCTURE_RAMPART

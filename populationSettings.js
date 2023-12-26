@@ -12,7 +12,7 @@ StructureSpawn.prototype.population = {
     // перетаскиватель ресурсов
     'lorry': {
         pref: 'L',
-        limit: 2,
+        limit: 1,
         body: [MOVE, CARRY, CARRY, CARRY, MOVE]
     },
     //апгрейд контроллера

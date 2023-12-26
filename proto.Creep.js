@@ -68,7 +68,7 @@ Creep.prototype.doRepair = function(){
         }
     }
     if(targets.length<1){
-        targets = this.room.find(FIND_MY_STRUCTURES, {
+        targets = this.room.find(FIND_STRUCTURES, {
             filter: object =>
                 object.structureType !== STRUCTURE_WALL
                 && object.structureType !== STRUCTURE_RAMPART
@@ -102,7 +102,7 @@ Creep.prototype.doWallsRampartsRepair = function(){
     if (this.memory.wallID && Game.getObjectById(this.memory.wallID).hits < Game.getObjectById(this.memory.wallID).hitsMax / 2) {
         targets[0] = Game.getObjectById(this.memory.wallID);
     } else {
-        targets = this.room.find(FIND_MY_STRUCTURES, {
+        targets = this.room.find(FIND_STRUCTURES, {
             filter: object => (object.structureType === STRUCTURE_RAMPART || object.structureType === STRUCTURE_WALL) && object.hits < (object.hitsMax / 2)
         });
 

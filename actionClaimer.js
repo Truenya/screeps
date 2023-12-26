@@ -18,7 +18,7 @@ module.exports = {
 
             // ищем ближийший накопитель
             if (!structure) {
-                structures = creep.pos.findInRange(FIND_MY_STRUCTURES, 3, {
+                structures = creep.pos.findInRange(FIND_STRUCTURES, 3, {
                     filter: (s) => ((s.structureType === STRUCTURE_SPAWN
                             || s.structureType === STRUCTURE_EXTENSION
                             || s.structureType === STRUCTURE_TOWER
@@ -34,7 +34,7 @@ module.exports = {
 
                 if (!utils.isNorm(c_vo_lorry)) {
                     //все экстеншены ДОЛЖНЫ быть заполнены!
-                    structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                    structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                         filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity
                     });
                 }
@@ -42,7 +42,7 @@ module.exports = {
                 //если уровень контроллера позволяет строить стораджи, то забиваем только их!
                 if (!structure) {
                     if (creep.room.controller.level > 3) {
-                        structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                        structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                             filter: (s) => s.structureType === STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] < s.storeCapacity
                         });
                     }
@@ -57,7 +57,7 @@ module.exports = {
 
             // если все забили, то забиваем все подряд, что еще не наполнено
             if (!structure){
-                structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => ((s.structureType === STRUCTURE_SPAWN
                         || s.structureType === STRUCTURE_EXTENSION
                         || s.structureType === STRUCTURE_TOWER)
@@ -68,7 +68,7 @@ module.exports = {
 
             // совсем на худой конец, есть башни и спауны
             if (structure === undefined) {
-                structure = creep.room.find(FIND_MY_STRUCTURES, {
+                structure = creep.room.find(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType === STRUCTURE_EXTENSION ||
                             structure.structureType === STRUCTURE_SPAWN ||

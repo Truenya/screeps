@@ -24,7 +24,7 @@ module.exports = {
             // TODO Добавить поиск мертвых крипов с энергией, чтобы не исчезала
             // если есть стораджи и в них есть что брать
             // if (creep.room.controller.level > 4) {
-            //     target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+            //     target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             //         filter: (s) => s.structureType === STRUCTURE_LINK && s.energy > 0
             //     });
             //     creep.memory.getFrom = STRUCTURE_LINK;
@@ -44,7 +44,7 @@ module.exports = {
 
             // Если последнее куда мы клали не сторадж, значит можно оттуда взять
             if (creep.memory.putTo !== STRUCTURE_STORAGE) {
-                target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] > 0
                 });
                 creep.memory.getFrom = STRUCTURE_STORAGE;
@@ -59,7 +59,7 @@ module.exports = {
 
             //если нет в сторадже, идем в контейнеры, если есть, конечно
             if (!utils.isNorm(target)) {
-                target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > creep.store.getCapacity()
                 });
                 creep.memory.getFrom = STRUCTURE_CONTAINER;
@@ -105,7 +105,7 @@ module.exports = {
 
             // пошли тащить
             if(creep.memory.getFrom === STRUCTURE_CONTAINER){
-                structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_STORAGE &&  s.store[RESOURCE_ENERGY] < s.storeCapacity
                 });
                 if (utils.isNorm(structure))
@@ -114,7 +114,7 @@ module.exports = {
 
             // ищем ближийший накопитель
             if (!utils.isNorm(structure)) {
-                structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => (s.structureType === STRUCTURE_SPAWN) && s.energy < s.energyCapacity
                 });
                 if (utils.isNorm(structure))
@@ -123,7 +123,7 @@ module.exports = {
 
             if (!utils.isNorm(structure)) {
                 //все экстеншены ДОЛЖНЫ быть заполнены!
-                structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity
                 });
                 if (utils.isNorm(structure))
@@ -131,7 +131,7 @@ module.exports = {
             }
 
             if (!utils.isNorm(structure)) {
-                structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_TOWER && s.store[RESOURCE_ENERGY] < s.storeCapacity
                 });
                 if (utils.isNorm(structure))
@@ -141,7 +141,7 @@ module.exports = {
             }
 
             if ((!utils.isNorm(structure)) && creep.memory.getFrom !== STRUCTURE_STORAGE) {
-                structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_STORAGE
                     // &&  s.store[RESOURCE_ENERGY] < s.storeCapacity
                 });
@@ -151,7 +151,7 @@ module.exports = {
             }
             // Если уж все заполнено и даже пусть мы брали из стораджа, отнесем снова туда
             if ((!utils.isNorm(structure))) {
-                structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => s.structureType === STRUCTURE_STORAGE
                     // &&  s.store[RESOURCE_ENERGY] < s.storeCapacity
                 });
