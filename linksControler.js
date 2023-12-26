@@ -28,7 +28,7 @@ function getTargets(currentRoom, room, id) {
 }
 
 module.exports = {
-    towerActions:function(){
+    linkActions:function(){
         if (!isNorm(Memory.linkSettings)) {
             return;
         }

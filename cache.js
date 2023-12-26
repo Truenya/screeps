@@ -19,12 +19,7 @@ function init(){
 }
 
 
-function NearestAvailableStructureWithEnergy(creep) {
-
-}
-
 exports.init = init;
-
 
 // function clear() {
 //     Memory.structures = undefined;

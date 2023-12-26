@@ -18,12 +18,13 @@ Memory.linkSettings = linkSettings;
 module.exports.loop = function () {
     cache.init();
     console.log('tick: ' + Game.time);
-    tc.towerActions()
+    tc.towerActions();
+    // console.log(JSON.stringify(Game.spawns, null, 2)) ;
 
     for (let spawn in Game.spawns) {
         Game.spawns[spawn].populationControl();
     }
     
     // cc.creepActions();
-    lc.towerActions();
+    lc.linkActions();
 };

@@ -126,7 +126,7 @@ StructureSpawn.prototype.populationControl = function () {
 
     // FIXME: этого тут быть не должно.
     for (let name in Memory.creeps) {
-        if (Game.creeps[name] !== undefined) {
+        if (isNorm(Game.creeps[name])) {
             //запуск action'ов
             //FIXME  вынести из спавна экшены
             actions[Memory.creeps[name].role].run(Game.creeps[name]);
@@ -151,22 +151,24 @@ StructureSpawn.prototype.populationControl = function () {
         delete Memory.creeps[name];
     }
     // Вот досюда фиксить
-
+    // console.log(`[population]-> ${this.name} -> ${JSON.stringify(Memory.population[this.name])}`);
     if(this.spawning){
+        // console.log('[notice]-> spawning...');
         return;
     }
+
     if (!isNorm(this.populationPriority)){
-        this.populationPriority = ['harvester', 'builder', 'harvesterLD', 'lorry', 'upgrader', 'repair', 'repairWall', 'TowerSupply', 'RoomClaimer'];
+        this.populationPriority = ['harvester','lorry', 'builder', 'harvesterLD', 'upgrader', 'repair', 'repairWall', 'TowerSupply', 'RoomClaimer'];
     }
 
     for (let role in this.populationPriority) {
+        // console.log(`[population]-> ${this.name} -> ${this.populationPriority[role]}`);
         role = this.populationPriority[role];
         if (Memory.population[this.name][role] < this.population[role]['limit']) {
             if (this.creepCreate(role)) {
                 console.log('[notice]-> spawning ' + role);
-                continue;
+                break;
             }
-            break;
         }
     }
 };
@@ -193,9 +195,10 @@ StructureSpawn.prototype.constructCreepBody = function (role) {
                 returnBody[returnBody.length] = this.population[role]['body'][bodyPart];
             }
         }
-        if (!role.includes('harvester')){
-            break;
-        }
+        // if (!role.includes('harvester')){
+        //     break;
+        // }
+        totalEnergy/=3;
     }
 
     if(totalEnergy < 0){
@@ -205,6 +208,7 @@ StructureSpawn.prototype.constructCreepBody = function (role) {
     if(returnBody.length < this.population[role]['body'].length){
         returnBody = this.population[role]['body'];
     }
+    // console.log('[creepBody]-> role "'+role+'" -> body '+returnBody);
 
     return returnBody;
 };
@@ -228,11 +232,13 @@ StructureSpawn.prototype.creepCreate = function (role) {
 
     let tmp = this.canCreateCreep(creepBody, this.population[role]['pref'] + '_'+ pref.getTime());
     if( tmp !== OK){
+        console.log('[notice]-> can not create creep: ' + tmp + ', creepBody: ' + creepBody);
         return false;
     }
 
     let cName = this.createCreep(creepBody,this.population[role]['pref'] + '_'+pref.getTime(),{'role':role,'spawn':this.name});
     if(cName === undefined || !_.isString(cName)){
+        console.log('[notice]-> can not create creep, unknown error');
         return false;
     }
 

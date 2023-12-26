@@ -5,6 +5,7 @@ module.exports = {
      * @param {Creep} creep
      */
     run:function(creep){
+        let structure;
         if(creep.carry.energy === 0 || creep.memory.harvesting){
             creep.memory.action = 'mine Energy';
             creep.memory.harvesting = creep.mineEnergy();
@@ -15,22 +16,23 @@ module.exports = {
         }
         creep.memory.action = 'transfer Energy';
 
-        let lorrysCount = Memory.population[creep.memory.spawn]['lorry'];
-        if (!utils.isNorm(lorrysCount)) {
-            //все экстеншены ДОЛЖНЫ быть заполнены!
-            structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity
-            });
-            if (utils.isNorm(structure)) {
-                if (creep.transfer(structure, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(structure);
-                }
-                return;
-            }
-        }
+        // let lorrysCount = Memory.population[creep.memory.spawn]['lorry'];
+        // if (!utils.isNorm(lorrysCount)) {
+        //     //все экстеншены ДОЛЖНЫ быть заполнены!
+        //     structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+        //         filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity
+        //     });
+        //     if (utils.isNorm(structure)) {
+        //         if (creep.transfer(structure, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+        //             creep.moveTo(structure);
+        //         }
+        //         return;
+        //     }
+        // }
 
-        let structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-            filter: (s) => s.structureType === STRUCTURE_LINK && s.energy < s.energyCapacity
+        structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (s) => s.structureType === STRUCTURE_LINK && s.energy < s.energyCapacity,
+            range: 1
         });
         // ищем ближайший накопитель
         if (utils.isNorm(structure)) {
