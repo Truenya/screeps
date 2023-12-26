@@ -23,6 +23,7 @@ module.exports.loop = function () {
 
     for (let spawn in Game.spawns) {
         Game.spawns[spawn].populationControl();
+        Memory.rooms[Game.spawns[spawn].room.name] = {claimed: true};
     }
     
     // cc.creepActions();

@@ -8,11 +8,13 @@ module.exports = {
      */
     run:function(creep){
         // А почему ресурсные румы в крипе хранятся?
-        // if(creep.resourseRooms.length === 0){
-        //     console.log('[notice]-> no resource rooms, change action to simple harvester');
+        // 1. Place recource room in memory, not in creep.memory.
+        // 2. Take any of them and set it in creep.memory.resourceRoomID
+        if(creep.resourseRooms.length === 0){
+            console.log('[notice]-> no resource rooms, change action to simple harvester');
             harvester.run(creep);
             return;
-        // }
+        }
 
         // Куда идти и что фармить
         // FIXME: все эти проверки надо в main перетащить, в отдельную функцию

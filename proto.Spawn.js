@@ -101,7 +101,8 @@ const actions = {
     repairWall: require('actionWallRepair'),
     TowerSupply: require('actionTowerSupply'),
     harvesterLD: require('actionHarvestLD'),
-    lorry: require('actionLorry')
+    lorry: require('actionLorry'),
+    RoomClaimer: require('actionClaimer'),
 };
 
 /**

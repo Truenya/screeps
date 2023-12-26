@@ -18,33 +18,14 @@ function initState(){
     Memory.state.initialized = true;
 }
 
-const resourceRooms={};
-
-function initResourceRooms(){
-    if(Memory.resourceRooms === undefined){
-        Memory.resourceRooms = [];
-        for(let id in creep.resourseRooms){
-            Memory.resourceRooms[id] = 0;
-            console.log(id);
-        }
-    }
-
-    if (creep.memory.resourceRoomID === undefined) {
-        for (let id in creep.resourseRooms) {
-            if (Memory.resourceRooms[id] < creep.resourseRooms[id]['limit']) {
-                creep.memory.resourceRoomID = id;
-                Memory.resourceRooms[id] += 1;
-                break;
-            }
-        }
-    }
-}
+const claimableRooms = [{name:'W59S5', claimed:false}];
 
 function init(){
     initState();
 }
 
 exports.init = init;
+exports.claimableRooms = claimableRooms;
 
 // function clear() {
 //     Memory.structures = undefined;

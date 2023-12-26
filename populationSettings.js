@@ -54,7 +54,7 @@ StructureSpawn.prototype.population = {
     'RoomClaimer': {
         pref: 'RC',
         limit: 0,
-        body: [MOVE, CARRY, CLAIM, WORK]
+        body: [MOVE, CARRY, CLAIM, WORK, MOVE]
     },
 };
 
