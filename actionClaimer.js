@@ -86,7 +86,7 @@ module.exports = {
                     creep.moveTo(structure);
                 }
             } else{
-                console.log('[notice] -> '+creep.id+' not found empty container for energy');
+                console.log('[notice] -> '+creep.name+' not found empty container for energy');
             }
         }
     }

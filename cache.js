@@ -18,8 +18,8 @@ function init(){
     Memory.state.initialized = true;
 }
 
-
 exports.init = init;
+
 
 // function clear() {
 //     Memory.structures = undefined;

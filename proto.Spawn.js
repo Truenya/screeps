@@ -198,6 +198,7 @@ StructureSpawn.prototype.constructCreepBody = function (role) {
         // if (!role.includes('harvester')){
         //     break;
         // }
+        // Don't use full energy for creeps
         totalEnergy/=3;
     }
 

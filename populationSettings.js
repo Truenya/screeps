@@ -18,13 +18,13 @@ StructureSpawn.prototype.population = {
     //апгрейд контроллера
     'upgrader': {
         pref: 'Up',
-        limit: 1,
+        limit: 2,
         body: [MOVE, MOVE, CARRY, WORK]
     },
     // строитель
     'builder': {
         pref: 'B',
-        limit: 1,
+        limit: 3,
         body: [MOVE, CARRY, WORK, WORK]
     },
     //майнер энергии в других комнатах
@@ -49,7 +49,7 @@ StructureSpawn.prototype.population = {
     'TowerSupply': {
         pref: 'TS',
         limit: 1,
-        body: [MOVE, CARRY, WORK, WORK]
+        body: [MOVE, CARRY, CARRY, MOVE]
     },
     'RoomClaimer': {
         pref: 'RC',
