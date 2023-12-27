@@ -20,31 +20,38 @@ function initState(){
 
     Memory.state.initialized = true;
 }
-function creepActions(){
-    for (let name in Memory.creeps) {
+
+function processActionsInRoom(room) {
+    const creeps = Memory.rooms[room].creeps;
+    for (const name in creeps) {
+        const creep = creeps[name];
         if (isNorm(Game.creeps[name])) {
             //запуск action'ов
             //TODO убрать тут экшены, оставить только работу с памятью
-            actions[Memory.creeps[name].role].run(Game.creeps[name]);
+            actions[creep.role].run(Game.creeps[name]);
             continue;
         }
 
-        // Game.creeps[name] === undefined
-        Memory.population[this.name][Memory.creeps[name].role]--;
-
-        if(Memory.population[this.name][Memory.creeps[name].role] < 0){
-            Memory.population[this.name][Memory.creeps[name].role] = 0;
+        Memory.population[this.name][creep.role]--;
+        if (Memory.population[this.name][creep.role] < 0) {
+            Memory.population[this.name][creep.role] = 0;
         }
 
-        if (Memory.creeps[name].resourceRoomID !== undefined) {
-            Memory.resourceRooms[Memory.creeps[name].resourceRoomID] --;
+        if (Memory.rooms[room].creeps[name].resourceRoomID !== undefined) {
+            Memory.resourceRooms[creep.resourceRoomID]--;
 
-            if(Memory.resourceRooms[Memory.creeps[name].resourceRoomID] < 0){
-                Memory.resourceRooms[Memory.creeps[name].resourceRoomID] = 0;
+            if (Memory.resourceRooms[creep.resourceRoomID] < 0) {
+                Memory.resourceRooms[creep.resourceRoomID] = 0;
             }
         }
 
-        delete Memory.creeps[name];
+        delete Memory.rooms[room].creeps[name];
+    }
+}
+
+function creepActions(){
+    for (const room in Memory.rooms){
+        processActionsInRoom(room);
     }
 }
 

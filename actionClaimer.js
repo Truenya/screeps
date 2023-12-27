@@ -40,6 +40,7 @@ module.exports = {
             creep.memory.harvesting = creep.store[RESOURCE_ENERGY] < creep.store.getCapacity();
             return;
         }
+
         creep.memory.harvesting = creep.store[RESOURCE_ENERGY] === 0;
         builder.run(creep);
     }
