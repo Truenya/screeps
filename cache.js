@@ -1,5 +1,4 @@
 const {isNorm} = require("./utils");
-const {actions} = require("./actions");
 
 function initState(){
     if (!Memory.state)
@@ -21,23 +20,24 @@ function initState(){
     Memory.state.initialized = true;
 }
 
-function processActionsInRoom(room) {
-    const creeps = Memory.rooms[room].creeps;
+function clearDeadCreaps(){
+    const creeps = Memory.creeps;
     for (const name in creeps) {
         const creep = creeps[name];
         if (isNorm(Game.creeps[name])) {
-            //запуск action'ов
-            //TODO убрать тут экшены, оставить только работу с памятью
-            actions[creep.role].run(Game.creeps[name]);
             continue;
         }
-
-        Memory.population[this.name][creep.role]--;
-        if (Memory.population[this.name][creep.role] < 0) {
-            Memory.population[this.name][creep.role] = 0;
+        const spawn = creep.spawn;
+        if (!isNorm(creep.role)|| !isNorm(spawn)) {
+            delete Memory.creeps[name];
+            continue;
+        }
+        Memory.population[spawn][creep.role]--;
+        if (Memory.population[spawn][creep.role] < 0) {
+            Memory.population[spawn][creep.role] = 0;
         }
 
-        if (Memory.rooms[room].creeps[name].resourceRoomID !== undefined) {
+        if (Memory.creeps[name].resourceRoomID !== undefined) {
             Memory.resourceRooms[creep.resourceRoomID]--;
 
             if (Memory.resourceRooms[creep.resourceRoomID] < 0) {
@@ -45,22 +45,31 @@ function processActionsInRoom(room) {
             }
         }
 
-        delete Memory.rooms[room].creeps[name];
+        delete Memory.creeps[name];
     }
 }
+containersToFill ={
+    'W59S5': [
+        {
+            x: 32,
+            y: 32
+        }
+    ]
+};
 
-function creepActions(){
-    for (const room in Memory.rooms){
-        processActionsInRoom(room);
-    }
+function isToFill(container){
+    return true;
+    // if(container.pos.roomName in containersToFill){
+    //     const pos = container.pos;
+    //     return containersToFill[container.pos.roomName].some(p => p.x === pos.x && p.y === pos.y);
+    // }
+    // return false;
 }
-
-const claimableRooms = [{name:'W59S5', claimed:false}];
 
 function init(){
     initState();
 }
 
 exports.init = init;
-exports.claimableRooms = claimableRooms;
-exports.creepActions = creepActions;
+exports.clearDeadCreeps = clearDeadCreaps;
+exports.isToFill = isToFill;

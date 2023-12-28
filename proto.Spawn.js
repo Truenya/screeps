@@ -157,12 +157,15 @@ StructureSpawn.prototype.constructCreepBody = function (role) {
             if (totalEnergy >= 0) {
                 returnBody[returnBody.length] = this.population[role]['body'][bodyPart];
             }
+            if (returnBody.length >= MAX_CREEP_SIZE) {
+                return  returnBody;
+            }
         }
+        // Don't use full energy for creeps
         // if (!role.includes('harvester')){
         //     break;
         // }
-        // Don't use full energy for creeps
-        totalEnergy/=3;
+        totalEnergy/=2;
     }
 
     if(totalEnergy < 0){
@@ -196,7 +199,7 @@ StructureSpawn.prototype.creepCreate = function (role) {
 
     let tmp = this.canCreateCreep(creepBody, this.population[role]['pref'] + '_'+ pref.getTime());
     if( tmp !== OK){
-        console.log('[notice]-> can not create creep: ' + tmp + ', creepBody: ' + creepBody);
+        console.log('[notice]-> can not create creep: ' + tmp + ', creepBody '+ creepBody.length+': ' + creepBody);
         return false;
     }
 

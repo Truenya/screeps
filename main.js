@@ -7,7 +7,7 @@ require('populationSettings'); // настройки популяции
 require('harvesterLDSettings');//настройки харвестеров на длинные дистанции
 const tc = require('towerController');
 const lc = require('linksControler')
-// const cc = require('creepController')
+const cc = require('creepController')
 const cache = require('cache');
 //region links settings
 const linkSettings = require('linkSettings');
@@ -24,8 +24,8 @@ module.exports.loop = function () {
     for (let spawn in Game.spawns) {
         Game.spawns[spawn].populationControl();
     }
-    
-    // cc.creepActions();
+
     lc.linkActions();
-    cache.creepActions();
+    cc.creepActions();
+    cache.clearDeadCreeps();
 };

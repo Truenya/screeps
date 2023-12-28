@@ -12,7 +12,7 @@ StructureSpawn.prototype.population = {
     // перетаскиватель ресурсов
     'lorry': {
         pref: 'L',
-        limit: 1,
+        limit: 2,
         body: [MOVE, CARRY, CARRY, CARRY, MOVE]
     },
     //апгрейд контроллера
@@ -24,7 +24,7 @@ StructureSpawn.prototype.population = {
     // строитель
     'builder': {
         pref: 'B',
-        limit: 3,
+        limit: 2,
         body: [MOVE, CARRY, WORK, WORK]
     },
     //майнер энергии в других комнатах

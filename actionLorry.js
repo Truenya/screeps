@@ -1,9 +1,12 @@
 const {isNorm} = require("./utils");
+const {isToFill} = require("./cache");
 
 function findClosestSourceOfEnergy(creep) {
     // Тут мы выбираем откуда брать
     creep.memory.action = 'looking for Energy';
     // FIXME добавить список объектов энергии, чтобы все за ними не рвались толпой
+    // TODO в этот список можно включать сколько заберет оттуда текущий крип.
+    // и вычитать это в фильтрах
     let target = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES)
     if (isNorm(target)) {
         creep.memory.target = target.id;
@@ -67,7 +70,9 @@ function findClosestSourceOfEnergy(creep) {
 
     function takeEnergy(creep,target){
         if (!isNorm(target)) {
-            console.log(`lorry ${creep.name}: target not found`);
+            // console.log(`lorry ${creep.name}: target not found, going to стоянка 30 15`);
+            //then move to 30 15
+            creep.moveTo(30, 15);
             return;
         }
 
@@ -87,7 +92,7 @@ function findClosestSourceOfEnergy(creep) {
             }
         //fallthrough
         case ERR_NOT_IN_RANGE:
-            creep.moveTo(target);
+            creep.moveToMy(target);
             // routeCreep(creep, target);
             break;
         default:
@@ -96,6 +101,8 @@ function findClosestSourceOfEnergy(creep) {
 }
 
 function searchWhereToPlaceEnergy(creep){
+    // FIXME ужасный код, переписать
+    // список фильтров с нужными параметрами по приоритету.
     creep.memory.action = 'transfer Energy';
     let structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
         filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity
@@ -159,22 +166,43 @@ function searchWhereToPlaceEnergy(creep){
             return Game.getObjectById(structure.id);
         }
         // FIXME выше не ищет STORAGE, а ниже кладет напрямую в STORAGE
-        creep.memory.putTo = STRUCTURE_STORAGE;
-        return Game.getObjectById(Game.rooms[creep.pos.roomName].storage.id);
-
+        if (isNorm(creep.room.storage)) {
+            creep.memory.putTo = STRUCTURE_STORAGE;
+            return Game.getObjectById(Game.rooms[creep.pos.roomName].storage.id);
+        }
     }
-    return Game.getObjectById(structure.id);
+
+    if(isNorm(creep.room.storage)){
+        creep.drop(RESOURCE_ENERGY);
+        return structure;
+    }
+
+    return creep.pos.findClosestByPath(FIND_STRUCTURES, {
+        filter: (s) => {
+            return  s.structureType === STRUCTURE_CONTAINER &&s.store[RESOURCE_ENERGY] < s.storeCapacity
+            && isToFill(s);
+        }
+    });
 }
 
 function transferEnergy(creep, structure) {
     if (!isNorm(structure)) {
+        // TMP
+        // Когда класть некуда в домашней комнате, можно в любую другую сходить помочь
+        const tmp = Object.keys(Memory.rooms).filter(room => room.name !== creep.room.name)[0];
+        if(isNorm(tmp)) {
+            console.log('lorry: going to '+tmp+ ' for help' + ' from ' + creep.room.name);
+            creep.moveToMy(Game.rooms[tmp].controller.pos);
+            return;
+        }
+        // END TMP
         console.log('[notice] -> ' + creep.name + ' not found empty container for energy');
         return;
     }
 
     let resultTransfer = creep.transfer(structure, RESOURCE_ENERGY);
     if (resultTransfer === ERR_NOT_IN_RANGE) {
-        creep.moveTo(structure);
+        creep.moveToMy(structure);
     }
     if (resultTransfer === OK) {
         if (creep.memory.getFrom !== STRUCTURE_STORAGE)
@@ -188,11 +216,11 @@ module.exports = {
     },
 
     /**
-     * развозит энергию по спавнам и/или заполняет все контенеры из стораджа
+     * развозит энергию по спавнам и/или заполняет все контейнеры из стораджа
      * @param {Creep} creep
      */
     run:function(creep){
-        if (creep.store[RESOURCE_ENERGY] === 0) {
+        if (creep.store[RESOURCE_ENERGY] <= creep.store.getCapacity() / 2) {
             // Тут мы выбираем откуда брать
             this.findAndGetEnergy(creep);
             return;

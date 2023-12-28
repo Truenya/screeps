@@ -62,7 +62,8 @@ function putEnergy(creep){
     }
 
     if (!utils.isNorm(structure)) {
-        console.log('[notice] {ERROR} -> ' + creep.id + ' not found empty container for energy');
+        console.log('[notice] {ERROR} -> ' + creep.name + ' not found empty container for energy');
+        creep.drop(RESOURCE_ENERGY);
         return;
     }
 
