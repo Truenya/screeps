@@ -4,6 +4,14 @@ const {isToFill} = require("./cache");
 function findClosestSourceOfEnergy(creep) {
     // Тут мы выбираем откуда брать
     creep.memory.action = 'looking for Energy';
+    // если есть таргет и в нем есть что брать
+    if (isNorm(creep.memory.target)) {
+        const target = Game.getObjectById(creep.memory.target);
+        if ((creep.memory.getFrom !== creep.memory.putTo) && isNorm(target) /* && (target.store[RESOURCE_ENERGY] > 0 || target.energy > 0)*/) {
+            return target;
+        }
+    }
+
     // FIXME добавить список объектов энергии, чтобы все за ними не рвались толпой
     // TODO в этот список можно включать сколько заберет оттуда текущий крип.
     // и вычитать это в фильтрах
@@ -15,21 +23,13 @@ function findClosestSourceOfEnergy(creep) {
     }
 
     // find tombstones
-    let tombstone = creep.pos.findClosestByPath(FIND_TOMBSTONES, {
+    target = creep.pos.findClosestByPath(FIND_TOMBSTONES, {
         filter: (s) => s.store[RESOURCE_ENERGY] > 0
     });
-    if (isNorm(tombstone)) {
-        creep.memory.target = tombstone.id;
+    if (isNorm(target)) {
+        creep.memory.target = target.id;
         creep.memory.getFrom = LOOK_CREEPS;
-        return Game.getObjectById(tombstone.id);
-    }
-
-    // если есть таргет и в нем есть что брать
-    if (creep.memory.target) {
-        target = Game.getObjectById(creep.memory.target);
-        if ((creep.memory.getFrom !== creep.memory.putTo) && isNorm(target) && (target.store[RESOURCE_ENERGY] > 0 || target.energy > 0)) {
-            return target;
-        }
+        return Game.getObjectById(target.id);
     }
 
     // FIXME добавить список объектов энергии, чтобы все за ними не рвались толпой
@@ -104,6 +104,12 @@ function searchWhereToPlaceEnergy(creep){
     // FIXME ужасный код, переписать
     // список фильтров с нужными параметрами по приоритету.
     creep.memory.action = 'transfer Energy';
+    if ((Object.keys(creep.store)[0] !== RESOURCE_ENERGY || Object.keys(creep.store).length > 1) && isNorm(creep.room.storage)){
+        const target = creep.room.storage.id;
+        creep.memory.target = target;
+        creep.memory.putTo = STRUCTURE_STORAGE;
+        return Game.getObjectById(target);
+    }
     let structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
         filter: (s) => s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity
     });
@@ -189,25 +195,30 @@ function transferEnergy(creep, structure) {
     if (!isNorm(structure)) {
         // TMP
         // Когда класть некуда в домашней комнате, можно в любую другую сходить помочь
-        const tmp = Object.keys(Memory.rooms).filter(room => room.name !== creep.room.name)[0];
-        if(isNorm(tmp)) {
-            console.log('lorry: going to '+tmp+ ' for help' + ' from ' + creep.room.name);
-            creep.moveToMy(Game.rooms[tmp].controller.pos);
-            return;
-        }
+        // const tmp = Object.keys(Memory.rooms).filter(room => room.name !== creep.room.name)[0];
+        // if(isNorm(tmp)) {
+        //     console.log('lorry: going to '+tmp+ ' for help' + ' from ' + creep.room.name);
+        //     creep.moveToMy(Game.rooms[tmp].controller.pos);
+        //     return;
+        // }
         // END TMP
         console.log('[notice] -> ' + creep.name + ' not found empty container for energy');
         return;
     }
 
-    let resultTransfer = creep.transfer(structure, RESOURCE_ENERGY);
-    if (resultTransfer === ERR_NOT_IN_RANGE) {
-        creep.moveToMy(structure);
-    }
-    if (resultTransfer === OK) {
-        if (creep.memory.getFrom !== STRUCTURE_STORAGE)
-            creep.memory.getFrom = 0;
-    }
+    // for (k in Object.keys(creep.store)){
+    //     const type = Object.keys(creep.store)[k];
+    //     const count = creep.store[type];
+        let resultTransfer = creep.transfer(structure, Object.keys(creep.store)[0]);
+        if (resultTransfer === ERR_NOT_IN_RANGE) {
+            creep.moveToMy(structure);
+        }
+        if (resultTransfer === OK) {
+            if (creep.memory.getFrom !== STRUCTURE_STORAGE)
+                creep.memory.getFrom = 0;
+        }
+    //     return;
+    //
 }
 
 module.exports = {
@@ -220,7 +231,7 @@ module.exports = {
      * @param {Creep} creep
      */
     run:function(creep){
-        if (creep.store[RESOURCE_ENERGY] <= creep.store.getCapacity() / 2) {
+        if (creep.store.getUsedCapacity() === 0) {
             // Тут мы выбираем откуда брать
             this.findAndGetEnergy(creep);
             return;
