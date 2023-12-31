@@ -1,6 +1,6 @@
 const harvester = require('actionHarvest');
-const utils = require("./utils");
-const {isNorm} = require("./utils");
+// const utils = require("./utils");
+// const {isNorm} = require("./utils");
 
 module.exports = {
     run:function(creep){

@@ -3,8 +3,8 @@
  * @returns {boolean}
  */
 StructureTower.prototype.defend = function () {
-    let startCpu = Game.cpu.getUsed();
-    let elapsed;
+    // let startCpu = Game.cpu.getUsed();
+    // let elapsed;
     let target = this.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
     //this.pos.findClosestByRange(FIND_CREEPS, {filter: creep => creep.owner.username !== this.owner.username});
 
