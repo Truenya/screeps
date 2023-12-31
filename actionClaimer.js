@@ -12,7 +12,7 @@ module.exports = {
             Memory.rooms[room] = {};
         }
         // action to claim other rooms
-        const targetRoom = 'W59S5'; // Replace with the room you want to claim
+        const targetRoom = 'W57S5'; // Replace with the room you want to claim
 
         if (creep.room.name !== targetRoom) {
             // Move to the target room

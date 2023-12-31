@@ -165,6 +165,7 @@ function searchWhereToPlaceEnergy(creep){
     if (!isNorm(structure)) {
         structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (s) => s.structureType === STRUCTURE_STORAGE
+            || s.structureType === STRUCTURE_TERMINAL
             // &&  s.store[RESOURCE_ENERGY] < s.storeCapacity
         });
         if (isNorm(structure)) {
@@ -193,32 +194,21 @@ function searchWhereToPlaceEnergy(creep){
 
 function transferEnergy(creep, structure) {
     if (!isNorm(structure)) {
-        // TMP
-        // Когда класть некуда в домашней комнате, можно в любую другую сходить помочь
-        // const tmp = Object.keys(Memory.rooms).filter(room => room.name !== creep.room.name)[0];
-        // if(isNorm(tmp)) {
-        //     console.log('lorry: going to '+tmp+ ' for help' + ' from ' + creep.room.name);
-        //     creep.moveToMy(Game.rooms[tmp].controller.pos);
-        //     return;
-        // }
-        // END TMP
         console.log('[notice] -> ' + creep.name + ' not found empty container for energy');
         return;
     }
 
-    // for (k in Object.keys(creep.store)){
-    //     const type = Object.keys(creep.store)[k];
-    //     const count = creep.store[type];
-        let resultTransfer = creep.transfer(structure, Object.keys(creep.store)[0]);
-        if (resultTransfer === ERR_NOT_IN_RANGE) {
-            creep.moveToMy(structure);
-        }
-        if (resultTransfer === OK) {
-            if (creep.memory.getFrom !== STRUCTURE_STORAGE)
-                creep.memory.getFrom = 0;
-        }
-    //     return;
-    //
+    if (!creep.pos.isNearTo(structure.pos)){
+        return creep.moveToMy(structure);
+    }
+
+    let resultTransfer = creep.transfer(structure, Object.keys(creep.store)[0]);
+    if (resultTransfer === OK) {
+        if (creep.memory.getFrom !== STRUCTURE_STORAGE)
+            creep.memory.getFrom = 0;
+    } else{
+        console.log('[notice] -> ' + creep.name + ' transfer error: ' + resultTransfer);
+    }
 }
 
 module.exports = {
